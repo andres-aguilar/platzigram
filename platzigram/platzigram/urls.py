@@ -21,11 +21,15 @@ from django.conf.urls.static import static
 from django.contrib.auth.decorators import login_required
 
 from post.views import list_posts
-from users.views import login_view, logout_view
+from users.views import login_view, logout_view, signup_view, update_profile
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('posts/', login_required(list_posts), name='feed'),
+
     path('users/login', login_view, name='login'),
     path('users/logout', login_required(logout_view), name='logout'),
+    path('users/signup', signup_view, name='signup'),
+    path('users/me/profile', update_profile, name='update_profile'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
