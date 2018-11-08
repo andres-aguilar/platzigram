@@ -1,48 +1,28 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from datetime import datetime
 
-posts = [
-    {
-        'title': 'Mont blanc',
-        'user' : {
-            'name': 'Yosh',
-            'picture': 'https://picsum.photos/60/60/?image=883'
-        },
-        'timestamp': datetime.now().strftime('%b %dth, %Y - %H:%M hrs'),
-        'photo': 'https://picsum.photos/800/600/?random'
-    },
-    {
-        'title': 'Title 1',
-        'user': {
-            'name': 'Yosh',
-            'picture': 'https://picsum.photos/60/60/?image=883'
-        },
-        'timestamp': datetime.now().strftime('%b %dth, %Y - %H:%M hrs'),
-        'photo': 'https://picsum.photos/800/600/?random'
-    },
-    {
-        'title': 'Title 2',
-        'user': {
-            'name': 'Yosh',
-            'picture': 'https://picsum.photos/60/60/?image=883'
-        },
-        'timestamp': datetime.now().strftime('%b %dth, %Y - %H:%M hrs'),
-        'photo': 'https://picsum.photos/800/600/?random'
-    },
-    {
-        'title': 'Title 3',
-        'user': {
-            'name': 'Yosh',
-            'picture': 'https://picsum.photos/60/60/?image=883'
-        },
-        'timestamp': datetime.now().strftime('%b %dth, %Y - %H:%M hrs'),
-        'photo': 'https://picsum.photos/800/600/?random'
-    }, 
-]
+from .models import Post
+from .forms import PostForm
 
 
 def list_posts(request):
+    posts = Post.objects.all().order_by('-created')
     return render(request, 'posts/feed.html', {'posts': posts})
 
-    
+
+def create_post(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('feed')
+    else:
+        form = PostForm()
+
+    return render(request, 'posts/new.html',  {
+        'form': form,
+        'user': request.user,
+        'profile': request.user.profile
+        }
+    )

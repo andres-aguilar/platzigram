@@ -7,10 +7,31 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 
 from .models import Profile
-
+from .forms import ProfileForm
 
 def update_profile(request):
-    return render(request, 'users/update_profile.html')
+    profile = request.user.profile
+    
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES )
+        if form.is_valid():
+            data = form.cleaned_data
+            
+            profile.website = data['website']
+            profile.phone_number = data['phone_number']
+            profile.biography = data['biography']
+            profile.picture = data['picture']
+            profile.save()
+
+            return redirect('update_profile')
+    else:
+        form = ProfileForm()
+
+    return render(request, 'users/update_profile.html', {
+        'profile': profile,
+        'user': request.user,
+        'form': form
+    })
 
 
 def login_view(request):
