@@ -10,7 +10,7 @@
         <p class="alert alert-danger">{{ error }}</p>
     {% endif%}
 
-    <form method="POST" action="{% url "login" %}" class='mt-5'>
+    <form method="POST" action="{% url "users:login" %}" class='mt-5'>
         {% csrf_token %}
 
         <div class="form-group">
@@ -22,7 +22,7 @@
         </div>
 
         <div class="text-center mt-2">
-            <p> <a href="{% url 'signup' %}"> Crear cuenta </a> </p>
+            <p> <a href="{% url 'users:signup' %}"> Crear cuenta </a> </p>
             <button class="btn btn-primary btn-block" type="submit">Sign in!</button>
         </div>
 
