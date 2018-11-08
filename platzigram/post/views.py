@@ -1,14 +1,22 @@
 from django.shortcuts import render, redirect
 
+from django.views.generic import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from datetime import datetime
 
 from .models import Post
 from .forms import PostForm
 
 
-def list_posts(request):
-    posts = Post.objects.all().order_by('-created')
-    return render(request, 'posts/feed.html', {'posts': posts})
+class PostsFeedView(LoginRequiredMixin, ListView):
+    """Return all published posts."""
+    template_name = 'posts/feed.html'
+    model = Post
+    ordering = ('-created',)
+    paginate_by = 2
+    context_object_name = 'posts'
+
 
 
 def create_post(request):
