@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 
 from .models import Profile
-from .forms import ProfileForm
+from .forms import ProfileForm, SignupForm
 
 def update_profile(request):
     profile = request.user.profile
@@ -55,25 +55,15 @@ def logout_view(request):
 
 def signup_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        passwd = request.POST['passwd']
-        passwd2 = request.POST['passwd_confirmation']
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = SignupForm()
 
-        if passwd != passwd2:
-            render(request, 'users/signup.html', {'error': 'Passwords does not match!'})
-
-        try:
-            user = User.objects.create_user(username=username, password=passwd)
-        except IntegrityError:
-            return render(request, 'users/signup.html', {'error': 'User already exists'})
-
-        user.first_name = request.POST['first_name']
-        user.last_name = request.POST['last_name']
-        user.email = request.POST['email']
-        user.save()
-
-        profile = Profile(user=user)
-        profile.save()
-
-        return redirect('login')
-    return render(request, 'users/signup.html')
+    return render(
+        request=request,
+        template_name='users/signup.html',
+        context={'form': form}
+    )
