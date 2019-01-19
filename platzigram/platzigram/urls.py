@@ -24,8 +24,8 @@ from django.contrib.auth.decorators import login_required
 urlpatterns = [
     path('admin/', admin.site.urls),
     # Post views
-    path('', include(('post.urls', 'post'), namespace='post')),
+    path('', include(('platzigram.apps.post.urls', 'post'), namespace='post')),
     # User views
-    path('users/', include(('users.urls', 'users'), namespace='users')),
+    path('users/', include(('platzigram.apps.users.urls', 'users'), namespace='users')),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

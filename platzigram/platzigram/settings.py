@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'xb%r0b0bdyi*4pnbye5a8*m7ijm@ju804p*g^z555&xanb$q7$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = not False
 
 ALLOWED_HOSTS = ['*']
 
@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Apps
-    'post',
-    'users',
+    'platzigram.apps.post',
+    'platzigram.apps.users',
 ]
 
 MIDDLEWARE = [

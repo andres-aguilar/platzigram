@@ -10,7 +10,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView, DetailView
 
-from post.models import Post
+from platzigram.apps.post.models import Post
 
 from .models import Profile
 from .forms import ProfileForm, SignupForm
