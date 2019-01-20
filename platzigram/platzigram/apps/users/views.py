@@ -1,5 +1,5 @@
-from django.urls import reverse
 from django.shortcuts import render
+from django.urls import reverse, reverse_lazy
 
 from django.db.utils import IntegrityError
 from django.contrib.auth.models import User
@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, FormView
 
 from platzigram.apps.post.models import Post
 
@@ -31,6 +31,15 @@ class UserDetailView(LoginRequiredMixin, DetailView):
         context['posts'] = Post.objects.filter(user=user).order_by('-created')
         return context
 
+
+class Signup(FormView):
+    template_name = 'users/signup.html'
+    form_class = SignupForm
+    success_url = reverse_lazy('users:login')
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
 
 def update_profile(request):
@@ -76,19 +85,3 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('users:login')
-
-
-def signup_view(request):
-    if request.method == 'POST':
-        form = SignupForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('users:login')
-    else:
-        form = SignupForm()
-
-    return render(
-        request=request,
-        template_name='users/signup.html',
-        context={'form': form}
-    )
