@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView, DetailView, FormView
+from django.views.generic import TemplateView, DetailView, FormView, UpdateView
 
 from platzigram.apps.post.models import Post
 
@@ -16,6 +16,7 @@ from .models import Profile
 from .forms import ProfileForm, SignupForm
 
 from django.contrib.auth.models import User
+
 
 class UserDetailView(LoginRequiredMixin, DetailView):
     template_name = 'users/detail.html'
@@ -42,30 +43,17 @@ class Signup(FormView):
         return super().form_valid(form)
 
 
-def update_profile(request):
-    profile = request.user.profile
-    
-    if request.method == 'POST':
-        form = ProfileForm(request.POST, request.FILES )
-        if form.is_valid():
-            data = form.cleaned_data
-            
-            profile.website = data['website']
-            profile.phone_number = data['phone_number']
-            profile.biography = data['biography']
-            profile.picture = data['picture']
-            profile.save()
+class UpdateProfileView(LoginRequiredMixin, UpdateView):
+    template_name = 'users/update_profile.html'
+    model = Profile 
+    fields = ['website', 'biography', 'phone_number', 'picture']
 
-            url = reverse('users:detail', kwargs={'username': request.user.username})
-            return redirect(url)
-    else:
-        form = ProfileForm()
+    def get_object(self):
+        return self.request.user.profile
 
-    return render(request, 'users/update_profile.html', {
-        'profile': profile,
-        'user': request.user,
-        'form': form
-    })
+    def get_success_url(self):
+        username = self.object.user.username
+        return reverse('users:detail', kwargs={'username': self.request.user.username})
 
 
 def login_view(request):
