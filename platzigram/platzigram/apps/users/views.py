@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import views as auth_views 
 from django.views.generic import TemplateView, DetailView, FormView, UpdateView
 
 from platzigram.apps.post.models import Post
@@ -56,18 +57,8 @@ class UpdateProfileView(LoginRequiredMixin, UpdateView):
         return reverse('users:detail', kwargs={'username': self.request.user.username})
 
 
-def login_view(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-
-        if user:
-            login(request, user)
-            return redirect('post:feed')
-        else:
-            return render(request, 'users/login.html', {'error': 'Invalid usersname or password'})
-    return render(request, 'users/login.html')
+class LoginView(auth_views.LoginView):
+    template_name = 'users/login.html'
 
 
 def logout_view(request):
