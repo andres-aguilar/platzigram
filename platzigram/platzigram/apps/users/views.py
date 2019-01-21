@@ -1,20 +1,15 @@
-from django.shortcuts import render
-from django.urls import reverse, reverse_lazy
-
-from django.db.utils import IntegrityError
 from django.contrib.auth.models import User
-
+from django.urls import reverse, reverse_lazy
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
 
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import views as auth_views 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView, DetailView, FormView, UpdateView
 
 from platzigram.apps.post.models import Post
 
 from .models import Profile
-from .forms import ProfileForm, SignupForm
+from .forms import SignupForm
 
 from django.contrib.auth.models import User
 
@@ -61,6 +56,6 @@ class LoginView(auth_views.LoginView):
     template_name = 'users/login.html'
 
 
-def logout_view(request):
-    logout(request)
-    return redirect('users:login')
+class LogoutView(LoginRequiredMixin, auth_views.LogoutView):
+    pass
+
